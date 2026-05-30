@@ -1,0 +1,60 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "components": [
+            { "name": "a", "type": "uint256[2]" },
+            { "name": "b", "type": "uint256[2][2]" },
+            { "name": "c", "type": "uint256[2]" }
+          ],
+          "name": "_proof",
+          "type": "tuple"
+        },
+        { "name": "_publicSignals", "type": "uint256[]" },
+        { "name": "_claimType", "type": "string" }
+      ],
+      "name": "verifyProof",
+      "outputs": [{ "name": "isValid", "type": "bool" }],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "name": "_proofHash", "type": "bytes32" }],
+      "name": "isProofVerified",
+      "outputs": [{ "name": "", "type": "bool" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "name": "_proofHash", "type": "bytes32" }],
+      "name": "getProofRecord",
+      "outputs": [
+        {
+          "components": [
+            { "name": "proofHash", "type": "bytes32" },
+            { "name": "claimType", "type": "string" },
+            { "name": "prover", "type": "address" },
+            { "name": "verifiedAt", "type": "uint256" },
+            { "name": "isValid", "type": "bool" }
+          ],
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        { "indexed": true, "name": "proofHash", "type": "bytes32" },
+        { "indexed": false, "name": "claimType", "type": "string" },
+        { "indexed": false, "name": "prover", "type": "address" },
+        { "indexed": false, "name": "isValid", "type": "bool" }
+      ],
+      "name": "ProofVerified",
+      "type": "event"
+    }
+  ]
+}

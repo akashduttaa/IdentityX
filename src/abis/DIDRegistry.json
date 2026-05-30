@@ -1,0 +1,96 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        { "name": "_did", "type": "string" },
+        { "name": "_publicKeyHash", "type": "bytes32" }
+      ],
+      "name": "registerDID",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "name": "_did", "type": "string" },
+        { "name": "_newPublicKeyHash", "type": "bytes32" }
+      ],
+      "name": "updateDID",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "name": "_did", "type": "string" }],
+      "name": "deactivateDID",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "name": "_did", "type": "string" },
+        { "name": "_serviceId", "type": "string" },
+        { "name": "_serviceEndpoint", "type": "string" }
+      ],
+      "name": "addService",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "name": "_did", "type": "string" }],
+      "name": "resolveDID",
+      "outputs": [
+        { "name": "owner", "type": "address" },
+        { "name": "publicKeyHash", "type": "bytes32" },
+        { "name": "isActive", "type": "bool" },
+        { "name": "createdAt", "type": "uint256" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "name": "_owner", "type": "address" }],
+      "name": "getDIDsByOwner",
+      "outputs": [{ "name": "", "type": "string[]" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalDIDs",
+      "outputs": [{ "name": "Total", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        { "indexed": true, "name": "did", "type": "string" },
+        { "indexed": false, "name": "owner", "type": "address" },
+        { "indexed": false, "name": "publicKeyHash", "type": "bytes32" }
+      ],
+      "name": "DIDRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        { "indexed": true, "name": "did", "type": "string" },
+        { "indexed": false, "name": "newPublicKeyHash", "type": "bytes32" }
+      ],
+      "name": "DIDUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        { "indexed": true, "name": "did", "type": "string" },
+        { "indexed": false, "name": "owner", "type": "address" }
+      ],
+      "name": "DIDDeactivated",
+      "type": "event"
+    }
+  ]
+}

@@ -1,0 +1,395 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-dark-950 text-gray-100 font-body;
+    overflow-x: hidden;
+  }
+
+  body.light {
+    @apply bg-gray-50 text-gray-900;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-dark-900;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-500;
+  }
+
+  .light ::-webkit-scrollbar-track {
+    @apply bg-gray-200;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-primary-500/30 text-white;
+  }
+}
+
+/* Component styles */
+@layer components {
+  /* Glass card effect */
+  .glass-card {
+    @apply bg-dark-800/40 backdrop-blur-xl border border-dark-600/30 rounded-2xl;
+  }
+
+  .light .glass-card {
+    @apply bg-white/80 border-gray-200/50;
+  }
+
+  /* Gradient borders */
+  .gradient-border {
+    position: relative;
+  }
+
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    background: linear-gradient(135deg, #6C63FF 0%, #00F5D4 50%, #FF3B8F 100%);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  /* Glow effect */
+  .glow-primary {
+    box-shadow: 0 0 40px rgba(108, 99, 255, 0.3), 0 0 80px rgba(108, 99, 255, 0.1);
+  }
+
+  .glow-secondary {
+    box-shadow: 0 0 40px rgba(0, 245, 212, 0.3), 0 0 80px rgba(0, 245, 212, 0.1);
+  }
+
+  /* Animated gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #6C63FF 0%, #00F5D4 50%, #FF3B8F 100%);
+    background-size: 200% auto;
+    animation: gradient 8s ease infinite;
+  }
+
+  /* Button styles */
+  .btn-primary {
+    @apply relative px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-xl
+           transition-all duration-300 overflow-hidden;
+  }
+
+  .btn-primary::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-primary-500 to-secondary-500 opacity-0
+           transition-opacity duration-300;
+  }
+
+  .btn-primary:hover::before {
+    opacity: 1;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-dark-700 hover:bg-dark-600 border border-dark-500 hover:border-primary-500
+           text-gray-100 font-medium rounded-xl transition-all duration-300;
+  }
+
+  .light .btn-secondary {
+    @apply bg-white hover:bg-gray-50 border-gray-300 hover:border-primary-500 text-gray-900;
+  }
+
+  /* Input styles */
+  .input-field {
+    @apply w-full px-4 py-3 bg-dark-800/50 border border-dark-600 focus:border-primary-500
+           rounded-xl text-gray-100 placeholder-gray-500 outline-none transition-all duration-300;
+  }
+
+  .input-field:focus {
+    @apply ring-2 ring-primary-500/20;
+  }
+
+  .light .input-field {
+    @apply bg-white border-gray-300 text-gray-900 placeholder-gray-400;
+  }
+
+  /* Card 3D tilt effect */
+  .tilt-card {
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .tilt-card:hover {
+    transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateZ(10px);
+  }
+
+  /* Flip card */
+  .flip-card {
+    perspective: 1000px;
+  }
+
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+  }
+
+  .flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-front,
+  .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: inherit;
+  }
+
+  .flip-card-back {
+    transform: rotateY(180deg);
+  }
+
+  /* Terminal effect */
+  .terminal {
+    @apply bg-dark-900 border border-dark-700 rounded-xl font-mono text-sm;
+  }
+
+  .terminal-header {
+    @apply flex items-center gap-2 px-4 py-3 border-b border-dark-700;
+  }
+
+  .terminal-dot {
+    @apply w-3 h-3 rounded-full;
+  }
+
+  .terminal-body {
+    @apply p-4 overflow-auto max-h-96;
+  }
+
+  .terminal-line {
+    @apply mb-1;
+  }
+
+  .terminal-prompt {
+    @apply text-secondary-500;
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply bg-success-500/20 text-success-500 border border-success-500/30;
+  }
+
+  .badge-warning {
+    @apply bg-warning-500/20 text-warning-500 border border-warning-500/30;
+  }
+
+  .badge-error {
+    @apply bg-error-500/20 text-error-500 border border-error-500/30;
+  }
+
+  .badge-primary {
+    @apply bg-primary-500/20 text-primary-500 border border-primary-500/30;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    @apply fixed left-0 top-0 h-screen w-64 bg-dark-900/95 backdrop-blur-xl border-r border-dark-700
+           z-40 transform transition-transform duration-300;
+  }
+
+  .sidebar-collapsed {
+    @apply -translate-x-full;
+  }
+
+  /* Stats card */
+  .stat-card {
+    @apply glass-card p-6 transition-all duration-300 hover:scale-105;
+  }
+
+  .stat-value {
+    @apply text-4xl font-display font-bold gradient-text;
+  }
+
+  /* Activity feed */
+  .activity-item {
+    @apply flex items-start gap-3 p-3 rounded-lg hover:bg-dark-700/50 transition-colors duration-200;
+  }
+
+  /* Anomaly alert */
+  .anomaly-alert {
+    @apply flex items-center gap-3 p-4 rounded-xl border;
+  }
+
+  .anomaly-alert-critical {
+    @apply bg-error-500/10 border-error-500/50 text-error-400;
+  }
+
+  .anomaly-alert-high {
+    @apply bg-warning-500/10 border-warning-500/50 text-warning-400;
+  }
+
+  /* Morphing text animation */
+  @keyframes morphText {
+    0%, 100% { opacity: 1; transform: translateY(0); }
+    50% { opacity: 0; transform: translateY(-20px); }
+  }
+
+  .morph-text {
+    animation: morphText 4s ease-in-out infinite;
+  }
+
+  /* Pulse ring */
+  .pulse-ring {
+    @apply absolute rounded-full border-2 border-primary-500 animate-ping;
+  }
+
+  /* Custom cursor (optional) */
+  .custom-cursor {
+    @apply fixed w-5 h-5 rounded-full bg-primary-500/50 pointer-events-none z-50 mix-blend-screen
+           transition-transform duration-100 ease-out;
+  }
+
+  /* Loading skeleton */
+  .skeleton {
+    @apply animate-pulse bg-dark-700 rounded;
+  }
+
+  /* Modal overlay */
+  .modal-overlay {
+    @apply fixed inset-0 bg-dark-950/80 backdrop-blur-sm z-50 flex items-center justify-center;
+  }
+
+  .modal-content {
+    @apply glass-card max-w-lg w-full mx-4 transform transition-all duration-300;
+  }
+
+  /* Toast notification */
+  .toast {
+    @apply fixed bottom-4 right-4 z-50 glass-card px-4 py-3 flex items-center gap-3
+           transform transition-all duration-300;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    @apply h-2 bg-dark-700 rounded-full overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full bg-gradient-to-r from-primary-500 to-secondary-500 transition-all duration-500;
+  }
+
+  /* Code block */
+  .code-block {
+    @apply terminal overflow-auto;
+  }
+
+  .code-block pre {
+    @apply p-4;
+  }
+
+  /* Tooltip */
+  .tooltip {
+    @apply absolute px-2 py-1 bg-dark-700 text-gray-100 text-xs rounded shadow-lg
+           opacity-0 invisible transition-all duration-200 pointer-events-none;
+  }
+
+  .tooltip-trigger:hover .tooltip {
+    @apply opacity-100 visible;
+  }
+}
+
+/* Utility classes */
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-secondary-500;
+  }
+
+  .border-gradient {
+    border-image: linear-gradient(135deg, #6C63FF 0%, #00F5D4 100%) 1;
+  }
+
+  .shadow-glow {
+    box-shadow: 0 0 60px rgba(108, 99, 255, 0.15);
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float 6s ease-in-out 2s infinite;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  .bg-mesh {
+    background-image:
+      radial-gradient(at 40% 20%, rgba(108, 99, 255, 0.15) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, rgba(0, 245, 212, 0.15) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, rgba(255, 59, 143, 0.1) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, rgba(108, 99, 255, 0.1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(0, 245, 212, 0.15) 0px, transparent 50%);
+  }
+
+  .bg-mesh-light {
+    background-image:
+      radial-gradient(at 40% 20%, rgba(108, 99, 255, 0.08) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, rgba(0, 245, 212, 0.08) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, rgba(255, 59, 143, 0.05) 0px, transparent 50%);
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* React Hot Toast customization */
+.toast-success {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
+  border-radius: 12px !important;
+  padding: 12px 24px !important;
+}
+
+.toast-error {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%) !important;
+  border-radius: 12px !important;
+  padding: 12px 24px !important;
+}
