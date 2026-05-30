@@ -44,6 +44,11 @@ function App() {
 
   useEffect(() => {
     const checkAuth = async () => {
+      if (!import.meta.env.VITE_SUPABASE_URL) {
+        setLoading(false);
+        return;
+      }
+
       if (token && isAuthenticated) {
         try {
           const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/auth/me`, {

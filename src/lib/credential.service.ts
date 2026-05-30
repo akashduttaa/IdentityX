@@ -1,4 +1,4 @@
-import { getApiUrl } from './supabase';
+import { getApiUrl, hasSupabase } from './supabase';
 import { useAuthStore } from '../store/authStore';
 import { useWalletStore } from '../store/walletStore';
 
@@ -11,6 +11,7 @@ interface IssueCredentialData {
 
 export const credentialService = {
   async getMyCredentials(token: string) {
+    if (!hasSupabase) throw new Error('Supabase not configured');
     const response = await fetch(getApiUrl('/credentials/mine'), {
       method: 'GET',
       headers: {
@@ -29,6 +30,7 @@ export const credentialService = {
   },
 
   async getIssuedCredentials(token: string) {
+    if (!hasSupabase) throw new Error('Supabase not configured');
     const response = await fetch(getApiUrl('/credentials/issued'), {
       method: 'GET',
       headers: {
@@ -46,6 +48,7 @@ export const credentialService = {
   },
 
   async getCredential(token: string, credentialId: string) {
+    if (!hasSupabase) throw new Error('Supabase not configured');
     const response = await fetch(getApiUrl(`/credentials?id=${credentialId}`), {
       method: 'GET',
       headers: {
@@ -63,6 +66,7 @@ export const credentialService = {
   },
 
   async issueCredential(token: string, data: IssueCredentialData) {
+    if (!hasSupabase) throw new Error('Supabase not configured');
     const response = await fetch(getApiUrl('/credentials/issue'), {
       method: 'POST',
       headers: {
@@ -82,6 +86,7 @@ export const credentialService = {
   },
 
   async revokeCredential(token: string, credentialId: string, reason?: string) {
+    if (!hasSupabase) throw new Error('Supabase not configured');
     const response = await fetch(getApiUrl('/credentials/revoke'), {
       method: 'POST',
       headers: {
@@ -104,6 +109,7 @@ export const credentialService = {
   },
 
   async getCredentialTypes(token?: string) {
+    if (!hasSupabase) throw new Error('Supabase not configured');
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };

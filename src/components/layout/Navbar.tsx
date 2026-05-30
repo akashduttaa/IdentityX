@@ -34,13 +34,17 @@ function Navbar() {
   }, []);
 
   const handleLogout = async () => {
-    if (token) {
-      await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/auth/logout`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    if (token && import.meta.env.VITE_SUPABASE_URL) {
+      try {
+        await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/auth/logout`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } catch (err) {
+        console.error('Logout request failed:', err);
+      }
     }
     logout();
     navigate('/');
