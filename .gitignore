@@ -27,3 +27,6 @@ build/
 .env
 .env.local
 .env.*
+
+.eslintcache
+.next
