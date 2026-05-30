@@ -448,18 +448,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Team Section */}
-      <section className="relative py-20 bg-dark-900/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-500 text-sm">
-            Built with love by{' '}
-            <span className="text-primary-400 font-semibold">Team DevOrbit</span>
-          </p>
-          <p className="text-gray-600 text-xs mt-2">
-            Hackathon 2024
-          </p>
-        </div>
-      </section>
+      {/* Team Section removed per request */}
 
       {/* Demo Terminal */}
       <section className="relative py-32">
