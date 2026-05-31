@@ -1,4 +1,4 @@
-import { ethers } from "hardhat";
+import hre, { ethers, network } from "hardhat";
 
 async function main() {
   console.log("Deploying IdentityChain contracts to Polygon Mumbai...");

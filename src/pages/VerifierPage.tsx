@@ -174,6 +174,29 @@ export default function VerifierPage() {
     toast.success('Copied to clipboard');
   };
 
+  const downloadReceipt = () => {
+    if (!result) return;
+
+    const timestamp = result.timestamp ? new Date(result.timestamp).toISOString() : new Date().toISOString();
+    const receipt = {
+      receipt_id: result.receipt_id || result.verification_id || `receipt_${Date.now()}`,
+      verification_result: result.success ? 'valid' : 'invalid',
+      claim_type: result.claim_type || claimType || 'unknown',
+      timestamp,
+      ...result,
+    };
+
+    const blob = new Blob([JSON.stringify(receipt, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `verification-receipt-${receipt.receipt_id}.json`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen bg-dark-950">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -397,7 +420,10 @@ export default function VerifierPage() {
                       </div>
 
                       {/* Download Receipt */}
-                      <button className="w-full btn-secondary mt-6 flex items-center justify-center gap-2">
+                      <button
+                        onClick={downloadReceipt}
+                        className="w-full btn-secondary mt-6 flex items-center justify-center gap-2"
+                      >
                         <Download className="w-4 h-4" />
                         Download Verification Receipt
                       </button>
