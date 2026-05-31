@@ -261,7 +261,7 @@ IdentityChain follows a Privacy-First architecture:
 
 Core philosophy:
 
-"Verify the claim, not the data."
+"We Verify the claim, not the data."
 
 ---
 
