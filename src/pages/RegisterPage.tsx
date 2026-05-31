@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, User, Building2, ArrowRight, Shield, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { authService } from '../lib/auth.service';
+import { hasSupabase } from '../lib/supabase';
+import { useAuthStore } from '../store/authStore';
 import toast from 'react-hot-toast';
 
 interface RegisterForm {
@@ -36,15 +38,30 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterForm) => {
     setIsLoading(true);
     try {
-      await authService.register({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        role: data.role,
-        organization_name: data.organization_name,
-      });
-      toast.success('Account created! Your DID is being generated...');
-      navigate('/dashboard');
+      if (!hasSupabase) {
+        // Create a local mock account for development when Supabase isn't configured
+        const mockUser = {
+          id: `local_${Date.now()}`,
+          email: data.email,
+          name: data.name || data.email.split('@')[0],
+          role: data.role,
+          wallet_address: '',
+          organization_name: data.organization_name,
+        } as any;
+        useAuthStore.getState().login(mockUser, 'local-token', `did:mock:${mockUser.id}`);
+        toast.success('Mock account created (Supabase not configured)');
+        navigate('/dashboard');
+      } else {
+        await authService.register({
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          role: data.role,
+          organization_name: data.organization_name,
+        });
+        toast.success('Account created! Your DID is being generated...');
+        navigate('/dashboard');
+      }
     } catch (error: any) {
       toast.error(error.message || 'Registration failed');
     } finally {
@@ -75,6 +92,11 @@ export default function RegisterPage() {
           </Link>
           <h1 className="text-3xl font-display font-bold text-gray-100">Create Your Identity</h1>
           <p className="text-gray-400 mt-2">Generate your DID and take control</p>
+          {!hasSupabase && (
+            <div className="mt-3 text-sm text-yellow-300">
+              Supabase not configured — creating a <strong>mock</strong> account locally for development. To enable real backend functionality, add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to a `.env` file and restart the dev server.
+            </div>
+          )}
         </div>
 
         {/* Form Card */}
