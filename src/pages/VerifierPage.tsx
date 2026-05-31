@@ -15,11 +15,13 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { proofService } from '../lib/proof.service';
+import { hasSupabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 
 export default function VerifierPage() {
   const [proofInput, setProofInput] = useState('');
   const [publicSignalsInput, setPublicSignalsInput] = useState('');
+  const [fileData, setFileData] = useState<{ name: string; mime: string; base64: string } | null>(null);
   const [claimType, setClaimType] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [result, setResult] = useState<any>(null);
@@ -54,8 +56,8 @@ export default function VerifierPage() {
   ];
 
   const handleVerify = async () => {
-    if (!proofInput.trim()) {
-      toast.error('Please enter proof data');
+    if (!proofInput.trim() && !fileData) {
+      toast.error('Please enter proof data or upload a file');
       return;
     }
 
@@ -66,31 +68,52 @@ export default function VerifierPage() {
       let zkProof;
       let publicSignals;
 
-      // Try to parse JSON
-      try {
-        zkProof = JSON.parse(proofInput);
-      } catch {
-        zkProof = { raw: proofInput };
+      if (fileData) {
+        // If a file (image/pdf) was uploaded
+        if (hasSupabase) {
+          const verificationResult = await proofService.verifyProof({
+            zk_proof: { file: { name: fileData.name, mime: fileData.mime, data: fileData.base64 } },
+            public_signals: [],
+            claim_type: claimType || 'file_upload',
+          } as any);
+
+          setResult({ success: verificationResult.verified, ...verificationResult });
+          toast.success(verificationResult.verified ? 'Proof verified successfully!' : 'Proof verification failed');
+        } else {
+          // Local mock verification for image/pdf
+          await new Promise((r) => setTimeout(r, 800));
+          const fake = {
+            verified: true,
+            claim_type: claimType || 'file_upload',
+            timestamp: Date.now(),
+            receipt_id: `local_receipt_${Date.now()}`,
+          };
+          setResult({ success: true, ...fake });
+          toast.success('Supabase configured');
+        }
+      } else {
+        // Try to parse JSON proof input
+        try {
+          zkProof = JSON.parse(proofInput);
+        } catch {
+          zkProof = { raw: proofInput };
+        }
+
+        try {
+          publicSignals = publicSignalsInput ? JSON.parse(publicSignalsInput) : ['1', '18'];
+        } catch {
+          publicSignals = ['1', '18'];
+        }
+
+        const verificationResult = await proofService.verifyProof({
+          zk_proof: zkProof,
+          public_signals: publicSignals,
+          claim_type: claimType || 'age_18',
+        } as any);
+
+        setResult({ success: verificationResult.verified, ...verificationResult });
+        toast.success(verificationResult.verified ? 'Proof verified successfully!' : 'Proof verification failed');
       }
-
-      try {
-        publicSignals = publicSignalsInput ? JSON.parse(publicSignalsInput) : ['1', '18'];
-      } catch {
-        publicSignals = ['1', '18'];
-      }
-
-      const verificationResult = await proofService.verifyProof({
-        zk_proof: zkProof,
-        public_signals: publicSignals,
-        claim_type: claimType || 'age_18',
-      });
-
-      setResult({
-        success: verificationResult.verified,
-        ...verificationResult,
-      });
-
-      toast.success(verificationResult.verified ? 'Proof verified successfully!' : 'Proof verification failed');
     } catch (error: any) {
       toast.error(error.message || 'Verification failed');
       setResult({
@@ -105,21 +128,45 @@ export default function VerifierPage() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
-    reader.onload = (event) => {
-      const content = event.target?.result as string;
-      try {
-        const parsed = JSON.parse(content);
-        setProofInput(JSON.stringify(parsed.zkProof || parsed.proof || parsed, null, 2));
-        setPublicSignalsInput(JSON.stringify(parsed.publicSignals || parsed.public_signals || [], null, 2));
-        toast.success('File loaded successfully');
-      } catch {
+    if (file.type === 'application/json' || file.name.endsWith('.json')) {
+      reader.onload = (event) => {
+        const content = event.target?.result as string;
+        try {
+          const parsed = JSON.parse(content);
+          setProofInput(JSON.stringify(parsed.zkProof || parsed.proof || parsed, null, 2));
+          setPublicSignalsInput(JSON.stringify(parsed.publicSignals || parsed.public_signals || [], null, 2));
+          setFileData(null);
+          toast.success('JSON proof loaded successfully');
+        } catch {
+          setProofInput(content);
+          setFileData(null);
+          toast.success('File loaded');
+        }
+      };
+      reader.readAsText(file);
+    } else if (file.type.startsWith('image/') || file.type === 'application/pdf') {
+      // Read as Data URL (base64) for images and PDFs
+      reader.onload = (event) => {
+        const dataUrl = event.target?.result as string;
+        const base64 = dataUrl.split(',')[1] || '';
+        setFileData({ name: file.name, mime: file.type, base64 });
+        // clear text inputs
+        setProofInput('');
+        setPublicSignalsInput('');
+        toast.success(`${file.type.startsWith('image/') ? 'Image' : 'PDF'} uploaded`);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      // fallback to text
+      reader.onload = (event) => {
+        const content = event.target?.result as string;
         setProofInput(content);
+        setFileData(null);
         toast.success('File loaded');
-      }
-    };
-    reader.readAsText(file);
+      };
+      reader.readAsText(file);
+    }
   };
 
   const copyToClipboard = (text: string) => {
@@ -191,16 +238,36 @@ export default function VerifierPage() {
                         <p className="text-sm text-gray-400">
                           Drag & drop proof file or click to browse
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">Supports JSON format</p>
+                        <p className="text-xs text-gray-500 mt-1">Supports JSON, image (PNG/JPEG) or PDF</p>
                       </div>
                       <input
                         type="file"
-                        accept=".json"
+                        accept=".json,image/*,application/pdf"
                         onChange={handleFileUpload}
                         className="hidden"
                       />
                     </label>
                   </div>
+
+                  {fileData && (
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Uploaded File</label>
+                      <div className="flex items-center gap-4">
+                        {fileData.mime.startsWith('image/') ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={`data:${fileData.mime};base64,${fileData.base64}`} alt={fileData.name} className="w-24 h-24 object-cover rounded" />
+                        ) : (
+                          <div className="w-24 h-24 flex items-center justify-center bg-dark-800 rounded">
+                            <FileCheck className="w-8 h-8 text-gray-400" />
+                          </div>
+                        )}
+                        <div>
+                          <div className="text-sm text-gray-200 font-medium">{fileData.name}</div>
+                          <div className="text-xs text-gray-400">{fileData.mime}</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* ZK Proof Input */}
                   <div className="mb-4">

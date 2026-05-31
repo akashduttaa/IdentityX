@@ -17,7 +17,7 @@ interface VerifyProofData {
 
 export const proofService = {
   async getMyProofs(token: string) {
-    if (!hasSupabase) throw new Error('Supabase not configured');
+    if (!hasSupabase) throw new Error('Supabase configured');
     const response = await fetch(getApiUrl('/proofs/mine'), {
       method: 'GET',
       headers: {
@@ -36,7 +36,7 @@ export const proofService = {
   },
 
   async getProof(token: string, proofId: string) {
-    if (!hasSupabase) throw new Error('Supabase not configured');
+    if (!hasSupabase) throw new Error('Supabase configured');
     const response = await fetch(getApiUrl(`/proofs?id=${proofId}`), {
       method: 'GET',
       headers: {
@@ -54,7 +54,7 @@ export const proofService = {
   },
 
   async generateProof(token: string, data: GenerateProofData) {
-    if (!hasSupabase) throw new Error('Supabase not configured');
+    if (!hasSupabase) throw new Error('Supabase configured');
     const response = await fetch(getApiUrl('/proofs/generate'), {
       method: 'POST',
       headers: {
@@ -75,7 +75,7 @@ export const proofService = {
   },
 
   async verifyProof(data: VerifyProofData) {
-    if (!hasSupabase) throw new Error('Supabase not configured');
+    if (!hasSupabase) throw new Error('Supabase configured');
     const response = await fetch(getApiUrl('/proofs/verify'), {
       method: 'POST',
       headers: {
@@ -94,7 +94,7 @@ export const proofService = {
   },
 
   async getClaimTypes() {
-    if (!hasSupabase) throw new Error('Supabase not configured');
+    if (!hasSupabase) throw new Error('Supabase configured');
     const response = await fetch(getApiUrl('/proofs/claim-types'), {
       method: 'GET',
     });

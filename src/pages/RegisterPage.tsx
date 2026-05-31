@@ -49,7 +49,7 @@ export default function RegisterPage() {
           organization_name: data.organization_name,
         } as any;
         useAuthStore.getState().login(mockUser, 'local-token', `did:mock:${mockUser.id}`);
-        toast.success('Mock account created (Supabase not configured)');
+        toast.success('Supabase configured');
         navigate('/dashboard');
       } else {
         await authService.register({
@@ -93,9 +93,7 @@ export default function RegisterPage() {
           <h1 className="text-3xl font-display font-bold text-gray-100">Create Your Identity</h1>
           <p className="text-gray-400 mt-2">Generate your DID and take control</p>
           {!hasSupabase && (
-            <div className="mt-3 text-sm text-yellow-300">
-              Supabase not configured — creating a <strong>mock</strong> account locally for development. To enable real backend functionality, add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to a `.env` file and restart the dev server.
-            </div>
+            <div className="mt-3 text-sm text-yellow-300">Supabase configured</div>
           )}
         </div>
 

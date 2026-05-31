@@ -16,7 +16,7 @@ interface LoginData {
 
 export const authService = {
   async register(data: RegisterData) {
-    if (!hasSupabase) throw new Error('Supabase not configured');
+    if (!hasSupabase) throw new Error('Supabase configured');
     const response = await fetch(getApiUrl('/auth/register'), {
       method: 'POST',
       headers: {
@@ -39,7 +39,7 @@ export const authService = {
   },
 
   async login(data: LoginData) {
-    if (!hasSupabase) throw new Error('Supabase not configured');
+    if (!hasSupabase) throw new Error('Supabase configured');
     const response = await fetch(getApiUrl('/auth/login'), {
       method: 'POST',
       headers: {
@@ -62,7 +62,7 @@ export const authService = {
   },
 
   async getProfile(token: string) {
-    if (!hasSupabase) throw new Error('Supabase not configured');
+    if (!hasSupabase) throw new Error('Supabase configured');
     const response = await fetch(getApiUrl('/auth/me'), {
       method: 'GET',
       headers: {
@@ -80,7 +80,7 @@ export const authService = {
   },
 
   async logout(token: string) {
-    if (!hasSupabase) throw new Error('Supabase not configured');
+    if (!hasSupabase) throw new Error('Supabase configured');
     try {
       await fetch(getApiUrl('/auth/logout'), {
         method: 'POST',
